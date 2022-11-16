@@ -163,4 +163,4 @@ dmypy.json
 .pytype/
 
 # package
-#*.zip
+*.zip

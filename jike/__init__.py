@@ -241,9 +241,9 @@ class jike(Source):
             _("Include subtitle in book title:"),
             _("Whether to append subtitle in the book title."),
         ),
-        #Option(
-        #    "apikey", "string", "", _("zhujian api apikey"), _("zhujian api apikey")
-        #),
+        Option(
+            "apikey", "string", "", _("jike api apikey"), _("jike api apikey")
+        ),
     )
 
 
@@ -269,7 +269,8 @@ class jike(Source):
             q = isbn
             t = "isbn"
         elif title or authors:
-
+            log.error('now we can only search based on isbn')
+            return
             authors = None
 
             def build_term(prefix, parts):
@@ -435,15 +436,17 @@ class jike(Source):
         entry = XPath('//atom:entry')
 
         # check apikey
-        #if not self.prefs.get("apikey"):
-        #    return
-
+        if not self.prefs.get("apikey"):
+            log.error('We need a apikey')
+            return
+        apikey=self.prefs.get("apikey")
         query = self.create_query(
             log, title=title, authors=authors, identifiers=identifiers
         )
         if not query:
             log.error('Insufficient metadata to construct query')
             return
+        query=query+'?apikey='+apikey
         isbn = check_isbn(identifiers.get("isbn", None))
         log('Making query:', query)
         br = self.browser
@@ -474,6 +477,8 @@ class jike(Source):
                 )
             log('here entries are',entries)
         else:
+            log.error('now we can only search based on isbn')
+            return
             try:
                 raw = br.open_novisit(query, timeout=timeout).read()
             except Exception as e:
@@ -526,10 +531,10 @@ class jike(Source):
 
             for query in queries:
                 br = self.browser
-                #br.addheaders = [
-                #    ('apikey', self.prefs["apikey"]),
-                #]
-                #log('apikey is ',self.prefs["apikey"])
+                br.addheaders = [
+                    ('apikey', self.prefs["apikey"]),
+                ]
+                log('apikey is ',self.prefs["apikey"])
                 try:
                     raw = br.open_novisit(query, timeout=timeout).read()
                 except Exception as e:
