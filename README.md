@@ -5,6 +5,8 @@
 ### Release
 Click `Release` on the right to download the latest .zip file.
 
+### OR
+
 ### DIY
 in `Terminal.app` or your prefered command line terminal
 
